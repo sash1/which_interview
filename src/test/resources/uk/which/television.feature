@@ -28,39 +28,39 @@ Feature:
     Then I should see only results in price range 500-1200
     And Results count should be visible
 
-  @wip
+  @ignore
   Scenario: Users are able to choose filter by Brands
     When I select Samsung
     Then I should see results only for Samsung
     And Results count should be visible
 
-  @wip
+  @ignore
   Scenario: Users are able to select Brands show more option
     When I select Show more option
     Then I should see more brand options
 
-  @wip
+  @ignore
   Scenario: Users are able to select Brands Show Fewer... option
     When I select Show Fewer... option
     Then I should see less results
 
-  @wip
+  @ignore
   Scenario: User are able to choose Screen type
     When I select LED
     Then I should see results for LED Screen type
     And Results count should be visible
 
-  @wip
+  @ignore
   Scenario: Users are able to choose Resolution
     When I select Full HD
     Then I should see results for 4K ultra HD Resolution type
 
-  @wip
+  @ignore
   Scenario: Users are able to choose features
     When I select Smart TV
     Then I should see results for Smart Tv features
 
-  @wip
+  @ignore
   Scenario: Users are able to choose Retailers
     When I select Amazon Marketplace UK
     Then I should see at least one result
