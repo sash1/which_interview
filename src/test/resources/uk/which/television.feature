@@ -64,4 +64,3 @@ Feature:
   Scenario: Users are able to choose Retailers
     When I select Amazon Marketplace UK
     Then I should see at least one result
-

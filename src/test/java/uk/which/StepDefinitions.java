@@ -22,7 +22,6 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
-
 public class StepDefinitions {
 
     WebDriver driver;
@@ -34,24 +33,22 @@ public class StepDefinitions {
         driver = new FirefoxDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
     }
 
     @Given("^I have navigated to http://www\\.which\\.co\\.uk/reviews/televisions$")
     public void i_have_navigated_to_http_www_which_co_uk_reviews_televisions()
             throws Throwable {
         driver.navigate().to("http://www.which.co.uk/reviews/televisions");
-        driver.findElement(
-                By.cssSelector("#dfp__listing__main button[type='button']"))
-                .click();
     }
 
     @Then("^I should see more then one search results$")
     public void i_should_see_more_then_one_search_results() throws Throwable {
+        popover_is_closed();
         int results_count = driver.findElements(
                 By.cssSelector("ul.products > li")).size();
 
         assertTrue("No results found!", results_count > 1);
+
     }
 
     @Then("^Results count should be visible$")
@@ -70,7 +67,6 @@ public class StepDefinitions {
                 + " Results";
         lastpage = (int) Math.ceil(Double.parseDouble(third)
                 / Double.parseDouble(second));
-        System.out.println("============>    " + lastpage);
 
         assertTrue("Page entries info: First number is not correct",
                 Integer.parseInt(first) > 0);
@@ -81,6 +77,7 @@ public class StepDefinitions {
 
         assertEquals("Page entries info is invalid", page_as_string,
                 expected_text);
+
     }
 
     @Then("^Pagination should be visible and correct$")
@@ -92,7 +89,6 @@ public class StepDefinitions {
         for (int i = 0; i < plist1.size(); i++) {
             String value1 = plist1.get(i).getText();
             assertEquals("Pagination Error", Integer.toString(i + 1), value1);
-
         }
 
         driver.findElement(By.cssSelector(".pagination__link.is-last-page"))
@@ -113,10 +109,12 @@ public class StepDefinitions {
 
         assertEquals("Sort dropdown is incorrect", sortDropdown.getText(),
                 selectedOption);
+        popover_is_closed();
     }
 
     @When("^I select (\\d+) random filters$")
     public void i_select_random_filters(int arg1) throws Throwable {
+        popover_is_closed();
         List<WebElement> show_more_buttons = driver.findElements(By
                 .xpath("//button[text()='Show more…']"));
         show_more_buttons.get(0).click();
@@ -124,7 +122,6 @@ public class StepDefinitions {
 
         for (int i = 0; i < arg1; i++) {
             WebElement checkbox = getRandomFilter();
-            System.out.println("CheckBox ===> Checked  " + checkbox.getText());
             List<WebElement> inputs = checkbox.findElements(By
                     .cssSelector("input"));
             if (inputs.size() > 0) {
@@ -134,13 +131,13 @@ public class StepDefinitions {
 
                 waitUntilElementNotPresent(By.className("loading-indicator"),
                         10);
-
             }
         }
     }
 
     @When("^I click clear filters$")
     public void i_click_clear_filters() throws Throwable {
+        popover_is_closed();
         driver.findElement(By.xpath("//button[text()='Clear all']")).click();
     }
 
@@ -178,22 +175,22 @@ public class StepDefinitions {
 
     @When("^I order results by \"(.*?)\"$")
     public void i_order_results_by(String arg1) throws Throwable {
-
+        popover_is_closed();
         new Select(driver.findElement(By.cssSelector("select.sort-selector")))
                 .selectByVisibleText(arg1);
 
-        waitForDateToChange();
-
+        waitForDataToChange();
     }
 
     @When("^I select screen size to be (.+)$")
     public void i_select_screen_size_to_be(String arg1) throws Throwable {
+        popover_is_closed();
         WebElement filter = driver.findElement(By
                 .xpath("//aside/section/ul/li/label/div/span/span[text()='"
                         + arg1 + "']"));
         filter.click();
 
-        waitForDateToChange();
+        waitForDataToChange();
     }
 
     @Then("^I should see search results for (\\d+)-(\\d+)\" listings$")
@@ -209,6 +206,7 @@ public class StepDefinitions {
 
             assertTrue("Screen size is not correct", currentSize >= minSize
                     && currentSize <= maxSize);
+
         }
 
     }
@@ -216,15 +214,16 @@ public class StepDefinitions {
     @When("^I select prices from ([\\d,]+) to ([\\d,]+)$")
     public void i_select_prices_from_to(String lower, String upper)
             throws Throwable {
+        popover_is_closed();
         WebElement lowerPrice = driver.findElement(By
                 .cssSelector("select[name='search[range][55][price][lower]']"));
         new Select(lowerPrice).selectByVisibleText("£" + lower);
-        waitForDateToChange();
+        waitForDataToChange();
 
         WebElement upperPrice = driver.findElement(By
                 .cssSelector("select[name='search[range][55][price][upper]']"));
         new Select(upperPrice).selectByVisibleText("£" + upper);
-        waitForDateToChange();
+        waitForDataToChange();
     }
 
     @Then("^I should see only results in price range (\\d+)-(\\d+)$")
@@ -242,26 +241,6 @@ public class StepDefinitions {
             assertTrue("Listing in not in correct prize range",
                     currentPrice >= minPrice && currentPrice <= maxPrice);
         }
-    }
-
-    @When("^I select Samsung$")
-    public void i_select_Samsung() throws Throwable {
-
-    }
-
-    @Then("^I should see results only for Samsung$")
-    public void i_should_see_results_only_for_Samsung() throws Throwable {
-
-    }
-
-    @When("^I select LED$")
-    public void i_select_LED() throws Throwable {
-
-    }
-
-    @Then("^I should see results for LED Screen type$")
-    public void i_should_see_results_for_LED_Screen_type() throws Throwable {
-
     }
 
     @After
@@ -295,8 +274,16 @@ public class StepDefinitions {
         }
     }
 
-    private void waitForDateToChange() throws Exception {
+    private void waitForDataToChange() throws Exception {
         waitUntilElementNotPresent(By.className("loading-indicator"), 10);
+    }
+
+    private void popover_is_closed() throws Throwable {
+        WebElement popover = driver.findElement(By
+                .cssSelector("#dfp__listing__main button[type='button']"));
+        if (popover.isDisplayed()) {
+            popover.click();
+        }
     }
 
     private WebElement getRandomFilter() {
@@ -306,5 +293,4 @@ public class StepDefinitions {
 
         return checkboxes.get(0);
     }
-
 }
